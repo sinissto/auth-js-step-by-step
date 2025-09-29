@@ -1,6 +1,5 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@/lib/generated/prisma";
 
-// Ovim se osiguravamo da imamo samo jednu instancu PrismaClient-a tokom razvoja
 declare global {
   var prisma: PrismaClient | undefined;
 }
