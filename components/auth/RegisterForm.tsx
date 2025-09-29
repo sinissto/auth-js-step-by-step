@@ -19,6 +19,7 @@ import FormError from "@/components/FormError";
 import FormSuccess from "@/components/FormSuccess";
 import { login } from "@/actions/login";
 import { useState, useTransition } from "react";
+import { register } from "@/actions/register";
 
 const LoginForm = () => {
   const [error, setError] = useState<string | undefined>("");
@@ -38,7 +39,7 @@ const LoginForm = () => {
     setSuccess("");
 
     startTransition(() => {
-      login(values).then((data) => {
+      register(values).then((data) => {
         if (data.error) {
           setError(data.error);
           setSuccess("");
@@ -117,7 +118,7 @@ const LoginForm = () => {
           <FormError message={error} />
           <FormSuccess message={success} />
           <Button type={"submit"} className={"w-full"} disabled={isPending}>
-            Login
+            Create an Account
           </Button>
         </form>
       </Form>
