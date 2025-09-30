@@ -11,6 +11,10 @@ export const {
   signIn,
   signOut,
 } = NextAuth({
+  pages: {
+    signIn: "/auth/login",
+    error: "/auth/error", // Error code passed in query string as ?error=, during sign in with different provider or other errors
+  },
   events: {
     async linkAccount({ user }) {
       await db.user.update({
