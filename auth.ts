@@ -33,8 +33,6 @@ export const {
         session.user.role = token.role as UserRole;
       }
 
-      console.log({ sessionSession: session });
-
       return session;
     },
   },
