@@ -25,6 +25,19 @@ export const {
   },
   //  By default, the `id` property does not exist on `token` or `session`. See the [TypeScript](https://authjs.dev/getting-started/typescript) on how to add it.
   callbacks: {
+    async signIn({ user, account }) {
+      // Allow OAuth without email verification
+      if (account?.provider !== "credentials") return true;
+
+      if (!user.id) return false;
+      const existingUser = await getUserById(user.id);
+
+      // Prevent sign in without email verification
+      if (!existingUser) return false;
+      if (!existingUser.emailVerified) return false;
+
+      return true;
+    },
     async jwt({ token }) {
       if (!token.sub) return token;
 
