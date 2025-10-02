@@ -1,6 +1,4 @@
 import { Resend } from "resend";
-import { ResetPasswordSchema } from "@/schemas";
-import { getUserByEmail } from "@/data/user";
 
 const resend = new Resend(process.env.RESEND_API_KEY!);
 
