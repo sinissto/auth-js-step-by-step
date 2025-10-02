@@ -29,6 +29,7 @@ const LoginForm = () => {
       ? "Email already associated with different provider. Please use that provider to login."
       : "";
 
+  const [showTwoFactor, setShowTwoFactor] = useState(false);
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
   const [isPending, startTransition] = useTransition();
@@ -45,15 +46,29 @@ const LoginForm = () => {
     setSuccess("");
 
     startTransition(() => {
-      login(values).then((data) => {
-        if (data?.error) {
-          setError(data.error);
-          setSuccess("");
-        } else {
-          setError("");
-          setSuccess(data?.success);
-        }
-      });
+      login(values)
+        .then((data) => {
+          if (data?.error) {
+            form.reset();
+            setError(data.error);
+            setSuccess("");
+          }
+
+          if (data?.success) {
+            form.reset();
+            setError("");
+            setSuccess(data?.success);
+          }
+
+          if (data?.twoFactor) {
+            setShowTwoFactor(true);
+          }
+        })
+        .catch((error) => {
+          // ovo je samo da ubijem error koji baca next.js na redirect
+          if (error.message !== "NEXT_REDIRECT")
+            setError("An unexpected error occurred. Please try again.");
+        });
     });
   };
 
@@ -67,55 +82,83 @@ const LoginForm = () => {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <div className={"space-y-4"}>
-            <FormField
-              name={"email"}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      placeholder={"john.doe@example.com"}
-                      type={"email"}
-                      disabled={isPending}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {!showTwoFactor && (
+              <>
+                <FormField
+                  control={form.control}
+                  name={"email"}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          placeholder={"john.doe@example.com"}
+                          type={"email"}
+                          disabled={isPending}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            <FormField
-              name={"password"}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      placeholder={"********"}
-                      type={"password"}
-                      disabled={isPending}
-                    />
-                  </FormControl>
-                  <Button
-                    size={"sm"}
-                    variant={"link"}
-                    className={"justify-start px-0 font-normal"}
-                    asChild={true}
-                  >
-                    <Link href={"/auth/reset-password"}>Forgot password?</Link>
-                  </Button>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                <FormField
+                  control={form.control}
+                  name={"password"}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Password</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          placeholder={"********"}
+                          type={"password"}
+                          disabled={isPending}
+                        />
+                      </FormControl>
+                      <Button
+                        size={"sm"}
+                        variant={"link"}
+                        className={"justify-start px-0 font-normal"}
+                        asChild={true}
+                      >
+                        <Link href={"/auth/reset-password"}>
+                          Forgot password?
+                        </Link>
+                      </Button>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </>
+            )}
+            {showTwoFactor && (
+              <FormField
+                control={form.control}
+                name={"code"}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Two Factor Code</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        placeholder={"XXXXXX"}
+                        type={"text"}
+                        disabled={isPending}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
           </div>
           <FormError message={error || urlError} />
           <FormSuccess message={success} />
 
           <Button type={"submit"} className={"w-full"} disabled={isPending}>
-            Login
+            {!showTwoFactor ? "Login" : "Confirm"}
           </Button>
         </form>
       </Form>
