@@ -1,3 +1,5 @@
+"use client";
+
 import * as z from "zod";
 import CardWrapper from "@/components/auth/CardWrapper";
 import {
@@ -16,6 +18,7 @@ import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ResetPasswordSchema } from "@/schemas";
+import { resetPassword } from "@/actions/resetPassword";
 
 const ResetPasswordForm = () => {
   const [error, setError] = useState<string | undefined>();
@@ -34,7 +37,10 @@ const ResetPasswordForm = () => {
     setSuccess("");
 
     startTransition(() => {
-      // todo: implement reset password action
+      resetPassword(values).then((data) => {
+        setError(data?.error);
+        setSuccess(data?.success);
+      });
     });
   };
 
