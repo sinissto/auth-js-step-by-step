@@ -9,9 +9,7 @@ const SettingsPage = () => {
   const onClick = () => logout();
 
   return (
-    <div>
-      {JSON.stringify(user)}
-
+    <div className={"bg-white p-10 rounded-xl cursor-pointer"}>
       <button type="submit" onClick={onClick}>
         Sign out
       </button>
