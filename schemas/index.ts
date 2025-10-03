@@ -25,3 +25,7 @@ export const NewPasswordResetSchema = z.object({
     message: "Minimum 6 characters required",
   }),
 });
+
+export const SettingsSchema = z.object({
+  name: z.string().min(1, { message: "Name is required" }),
+});
