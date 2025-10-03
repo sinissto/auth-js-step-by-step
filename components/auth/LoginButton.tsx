@@ -2,6 +2,14 @@
 
 import React from "react";
 import { useRouter } from "next/navigation";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import LoginForm from "@/components/auth/LoginForm";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 interface LoginButtonProps {
   children: React.ReactNode;
@@ -21,7 +29,20 @@ const LoginButton = ({
   };
 
   if (mode === "modal") {
-    return <span>// todo: implement modal login</span>;
+    return (
+      <Dialog>
+        <DialogTrigger asChild={asChild}>{children}</DialogTrigger>
+        <DialogContent
+          className={"p-0 w-auto bg-transparent border-none"}
+          aria-describedby={undefined}
+        >
+          <VisuallyHidden>
+            <DialogTitle></DialogTitle>
+          </VisuallyHidden>
+          <LoginForm />
+        </DialogContent>
+      </Dialog>
+    );
   }
 
   return (
